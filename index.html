@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zone Scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
+<style>
+  :root { --bg:#f4f5f7; --panel:#fff; --ink:#15181c; --muted:#6b7280; --line:#e3e6ea; --accent:#2f5bea; --green:#1f9254; --amber:#b7791f; --red:#d64532; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:13.5px/1.45 'IBM Plex Sans', system-ui, sans-serif; }
+  .app { display:grid; grid-template-rows:auto auto 1fr; height:100vh; }
+  header { display:flex; align-items:center; gap:14px; padding:12px 20px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .logo { display:flex; align-items:center; gap:8px; font-weight:600; font-size:15px; }
+  .logo i { width:22px; height:22px; border-radius:6px; background:var(--ink); display:grid; place-items:center; }
+  .logo i:after { content:""; width:9px; height:9px; border:2px solid #fff; border-radius:2px; }
+  .crumb { color:var(--muted); } .crumb b { color:var(--ink); font-weight:500; outline:none; border-bottom:1px dashed transparent; } .crumb b:hover, .crumb b:focus { border-color:var(--line); }
+  .sp { flex:1; }
+  button { font:inherit; font-weight:500; background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:7px; padding:6px 11px; cursor:pointer; white-space:nowrap; }
+  button:hover:not(:disabled) { background:#f7f8fa; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.4; cursor:default; }
+  .kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line); border-bottom:1px solid var(--line); }
+  .kpi { background:var(--panel); padding:12px 20px; }
+  .kpi > span { font-size:11.5px; color:var(--muted); display:block; }
+  .kpi strong { font:500 22px/1.2 'IBM Plex Mono', monospace; } .kpi em { font-style:normal; font-size:12px; color:var(--muted); margin-left:6px; }
+  .main { display:grid; grid-template-columns:minmax(320px,36%) 1fr; min-height:0; }
+  .mapcol { position:relative; border-right:1px solid var(--line); }
+  #map { height:100%; }
+  .drawbar { position:absolute; top:12px; left:12px; z-index:600; display:flex; gap:6px; }
+  .drawbar button { box-shadow:0 1px 3px rgba(0,0,0,.12); }
+  .tablecol { display:flex; flex-direction:column; min-height:0; background:var(--panel); }
+  .tb { display:flex; gap:8px; align-items:center; padding:10px 14px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  .tabs { display:flex; gap:2px; }
+  .tab { border:0; background:none; color:var(--muted); padding:6px 10px; border-radius:6px; } .tab.on { background:#eef2fd; color:var(--accent); }
+  .tb input { font:inherit; padding:6px 10px; border:1px solid var(--line); border-radius:7px; width:200px; }
+  .hint { padding:6px 14px; font-size:12.5px; color:var(--muted); border-bottom:1px solid var(--line); background:#fafbfc; position:relative; }
+  .hint.is-err { color:var(--red); }
+  .bar { position:absolute; left:0; right:0; bottom:-1px; height:2px; } .bar>i { display:block; height:100%; width:0; background:var(--accent); transition:width .2s; }
+  .scroll { flex:1; overflow:auto; }
+  table { width:100%; border-collapse:collapse; }
+  th { position:sticky; top:0; background:#fafbfc; text-align:left; font-weight:500; font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; padding:8px 10px; border-bottom:1px solid var(--line); z-index:1; }
+  td { padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  tr:hover td { background:#fafbfc; } tr.sel td { background:#eef2fd; }
+  td.cb, th.cb { width:34px; padding-left:14px; }
+  .nm { font-weight:500; } .sub { color:var(--muted); font-size:12px; text-transform:capitalize; }
+  .st { display:inline-flex; align-items:center; gap:6px; font-size:12px; white-space:nowrap; }
+  .st i { width:7px; height:7px; border-radius:50%; }
+  a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+  .soc a { margin-right:8px; font-size:12px; }
+  .mono { font-family:'IBM Plex Mono', monospace; font-size:12px; white-space:nowrap; }
+  .none { color:#b7bcc3; }
+  .empty { padding:60px 20px; text-align:center; color:var(--muted); }
+  .leaflet-container { font:inherit; }
+  @media (max-width:1000px) { .main { grid-template-columns:1fr; grid-template-rows:40vh 1fr; } .kpis { grid-template-columns:repeat(3,1fr); } .kpi:nth-child(n+4) { display:none; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo"><i></i>Zone Scout</div>
+    <div class="crumb">/ <b contenteditable="true" spellcheck="false" title="Click to rename this zone"></b></div>
+    <div class="sp"></div>
+    <button class="primary" data-act="find">Find places</button>
+    <button data-act="scan">Scan websites</button>
+    <button data-act="csv">Export all</button>
+    <button data-act="csv" data-checked="1">Export selected</button>
+  </header>
+  <div class="kpis">
+    <div class="kpi"><span>Zone area</span><strong data-stat="km2">0.00</strong><em>km²</em></div>
+    <div class="kpi"><span>Businesses</span><strong data-stat="total">0</strong></div>
+    <div class="kpi"><span>With website</span><strong data-stat="web">0</strong></div>
+    <div class="kpi"><span>With email</span><strong data-stat="email">0</strong></div>
+    <div class="kpi"><span>Run a newsletter</span><strong data-stat="news">0</strong><em>+<span data-stat="likely">0</span> likely</em></div>
+  </div>
+  <div class="main">
+    <div class="mapcol">
+      <div id="map"></div>
+      <div class="drawbar"><button data-act="rect">▭ Draw box</button><button data-act="poly">⬠ Draw shape</button><button data-act="clear">Clear</button></div>
+    </div>
+    <div class="tablecol">
+      <div class="tb">
+        <div class="tabs"><button class="tab on" data-filter="all">All</button><button class="tab" data-filter="web">Has website</button><button class="tab" data-filter="email">Has email</button><button class="tab" data-filter="news">Newsletter</button></div>
+        <div class="sp"></div>
+        <input type="search" placeholder="Search businesses" data-search>
+      </div>
+      <div style="position:relative"><div class="hint" data-hint>Draw a zone on the map, then click Find places.</div><div class="bar"><i data-progress></i></div></div>
+      <div class="scroll" id="list"></div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<script>
+window.UI = {
+  tiles: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+  zoneColor: "#2f5bea",
+  colors: { yes: "#1f9254", likely: "#b7791f", pending: "#2f5bea", no: "#9ca3af", error: "#d64532", none: "#cbd0d6" },
+  onSelect(id, fly) { update(); const el = document.querySelector(`tr[data-id="${CSS.escape(id)}"]`); if (el && !fly) el.scrollIntoView({ block: "nearest", behavior: "smooth" }); },
+  render(items) {
+    const list = $("#list");
+    if (!state.places.length) { list.innerHTML = `<div class="empty">${state.zone ? "Zone ready. Click <b>Find places</b>." : "No businesses yet. Draw a zone on the map."}</div>`; return; }
+    if (!items.length) { list.innerHTML = `<div class="empty">No businesses match this filter.</div>`; return; }
+    const allOn = items.every(p => state.checked.has(p.id));
+    const lbl = { yes: "Newsletter", likely: "Signup form", no: "None found", pending: "Not scanned", error: "Unreachable", none: "No website" };
+    list.innerHTML = `<table><thead><tr><th class="cb"><input type="checkbox" id="all" ${allOn ? "checked" : ""}></th><th>Business</th><th>Newsletter</th><th>Email</th><th>Website &amp; social</th><th>Phone</th></tr></thead><tbody>` +
+      items.map(p => {
+        const n = newsOf(p), em = emailsOf(p), so = socialsOf(p), tools = toolsOf(p);
+        return `<tr data-id="${esc(p.id)}" class="${state.selected === p.id ? "sel" : ""}">
+          <td class="cb"><input type="checkbox" data-cb="${esc(p.id)}" ${state.checked.has(p.id) ? "checked" : ""}></td>
+          <td><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.category)}${p.address ? " · " + esc(p.address) : ""}</div></td>
+          <td><span class="st"><i style="background:${colorOf(p)}"></i>${lbl[n]}</span>${tools.length ? `<div class="sub">${esc(tools.join(", "))}</div>` : ""}</td>
+          <td>${em.length ? em.map(e => `<div><a href="mailto:${esc(e)}">${esc(e)}</a></div>`).join("") : `<span class="none">—</span>`}</td>
+          <td>${p.website ? `<div><a href="${safe(p.website)}" target="_blank" rel="noopener">${esc(host(p.website))}</a></div>` : `<span class="none">—</span>`}
+            <div class="soc">${Object.entries(so).map(([k, v]) => `<a href="${safe(v)}" target="_blank" rel="noopener">${k}</a>`).join("")}</div></td>
+          <td class="mono">${esc(p.phone) || `<span class="none">—</span>`}</td></tr>`;
+      }).join("") + `</tbody></table>`;
+    list.querySelectorAll("tr[data-id]").forEach(r => r.onclick = e => { if (!e.target.closest("a,input")) select(r.dataset.id, true); });
+    list.querySelectorAll("[data-cb]").forEach(c => c.onchange = () => { c.checked ? state.checked.add(c.dataset.cb) : state.checked.delete(c.dataset.cb); });
+    const all = $("#all"); if (all) all.onchange = () => { items.forEach(p => all.checked ? state.checked.add(p.id) : state.checked.delete(p.id)); update(); };
+  }
+};
+</script>
+<script>/* Zone Scout core: map, drawing, lookup, scanning, CSV. Each interface supplies window.UI hooks. */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const UI = window.UI || {};
+const state = { zone: null, places: [], scans: {}, filter: "all", q: "", markers: {}, busy: false, selected: null, checked: new Set() };
+
+const map = L.map("map", { zoomControl: false, attributionControl: true }).setView([37.7599, -122.4166], 16);
+L.control.zoom({ position: UI.zoomPosition || "bottomright" }).addTo(map);
+L.tileLayer(UI.tiles || "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+  maxZoom: 20, subdomains: "abcd",
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
+}).addTo(map);
+
+const drawn = new L.FeatureGroup().addTo(map);
+const markerLayer = L.layerGroup().addTo(map);
+const zoneStyle = { color: UI.zoneColor || "#e0463c", weight: 2.5, fillOpacity: 0.07, dashArray: UI.zoneDash || null };
+const drawers = {
+  rectangle: new L.Draw.Rectangle(map, { shapeOptions: zoneStyle, showArea: false }),
+  polygon: new L.Draw.Polygon(map, { shapeOptions: zoneStyle, allowIntersection: false, showArea: false }),
+};
+function startDraw(kind) { Object.values(drawers).forEach(d => d.disable()); drawers[kind].enable(); setHint(kind === "rectangle" ? "Click and drag to draw a box." : "Click to add corners. Click the first point to finish."); }
+function clearZone() { drawn.clearLayers(); state.zone = null; state.places = []; state.scans = {}; state.checked.clear(); markerLayer.clearLayers(); update(); }
+map.on(L.Draw.Event.CREATED, e => { drawn.clearLayers(); drawn.addLayer(e.layer); state.zone = e.layer; update(); });
+
+const zonePoints = () => state.zone.getLatLngs()[0].map(p => [p.lat, p.lng]);
+function areaKm2(pts) {
+  const R = 6371, lat0 = pts.reduce((a, p) => a + p[0], 0) / pts.length * Math.PI / 180;
+  const xy = pts.map(([la, lo]) => [lo * Math.PI / 180 * R * Math.cos(lat0), la * Math.PI / 180 * R]);
+  let a = 0; for (let i = 0; i < xy.length; i++) { const [x1, y1] = xy[i], [x2, y2] = xy[(i + 1) % xy.length]; a += x1 * y2 - x2 * y1; }
+  return Math.abs(a / 2);
+}
+
+/* ---------- OpenStreetMap lookup (runs in the browser) ---------- */
+const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+const FILTERS = [`["shop"]`, `["amenity"~"^(restaurant|cafe|bar|pub|fast_food|ice_cream|biergarten|nightclub|food_court|community_centre|arts_centre|theatre|cinema|library|events_venue|coworking_space|social_centre|studio|marketplace|dentist|clinic|pharmacy|bank|veterinary|childcare|kindergarten|music_school|dancing_school|language_school)$"]`, `["office"]`, `["craft"]`, `["leisure"~"^(fitness_centre|sports_centre|dance|escape_game|amusement_arcade|bowling_alley|hackerspace|sauna)$"]`, `["tourism"~"^(gallery|museum|hotel|hostel|guest_house|attraction)$"]`, `["healthcare"]`];
+const normUrl = u => { u = (u || "").split(";")[0].trim(); if (!u) return ""; return /^https?:\/\//i.test(u) ? u : "https://" + u.replace(/^\/+/, ""); };
+const handle = (v, site) => { v = (v || "").trim(); if (!v) return ""; return v.startsWith("http") ? v : `https://www.${site}.com/${v.replace(/^@/, "")}`; };
+const firstTag = (t, ...ks) => { for (const k of ks) if (t[k]) return t[k].trim(); return ""; };
+const GROUPS = { amenity: "Food & venues", shop: "Retail", office: "Offices", craft: "Makers", leisure: "Leisure", tourism: "Arts & stay", healthcare: "Health" };
+
+async function findPlaces(pts) {
+  const poly = pts.map(([a, b]) => a.toFixed(6) + " " + b.toFixed(6)).join(" ");
+  const q = "[out:json][timeout:25];(" + FILTERS.map(f => `nwr${f}["name"](poly:"${poly}");`).join("") + ");out center tags;";
+  let data, last;
+  for (const m of OVERPASS) {
+    try {
+      const r = await fetch(m, { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+      if (!r.ok) throw new Error("Overpass " + r.status); data = await r.json(); break;
+    } catch (e) { last = e; }
+  }
+  if (!data) throw new Error("OpenStreetMap lookup failed: " + (last && last.message));
+  const seen = new Set(), out = [];
+  for (const el of data.elements || []) {
+    const t = el.tags || {}; let cat = "", group = "Other";
+    for (const k of Object.keys(GROUPS)) if (t[k]) { cat = t[k].replace(/_/g, " "); group = GROUPS[k]; break; }
+    let addr = [t["addr:housenumber"], t["addr:street"]].filter(Boolean).join(" "); if (t["addr:unit"]) addr += " #" + t["addr:unit"];
+    const key = (t.name || "").toLowerCase() + "|" + addr.toLowerCase(); if (addr && seen.has(key)) continue; seen.add(key);
+    const email = firstTag(t, "email", "contact:email");
+    out.push({ id: el.type + "/" + el.id, name: t.name || "", category: cat, group, address: addr, zip: t["addr:postcode"] || "",
+      lat: el.lat ?? el.center?.lat, lon: el.lon ?? el.center?.lon, phone: firstTag(t, "phone", "contact:phone"),
+      website: normUrl(firstTag(t, "website", "contact:website", "url")), hours: t.opening_hours || "", emails: email ? [email] : [],
+      instagram: handle(firstTag(t, "contact:instagram", "instagram"), "instagram"), facebook: handle(firstTag(t, "contact:facebook", "facebook"), "facebook"),
+      osm: `https://www.openstreetmap.org/${el.type}/${el.id}` });
+  }
+  return out.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/* ---------- Website scanning (needs api/index.py on Vercel or server.py) ---------- */
+let _scanOk = null;
+async function scanAvailable() {
+  if (_scanOk !== null) return _scanOk;
+  if (location.protocol === "file:") return (_scanOk = false);
+  try { const r = await fetch("api/index?health=1"); _scanOk = r.ok && (await r.json()).service === "zone-scout"; } catch { _scanOk = false; }
+  return _scanOk;
+}
+async function scanBatch(urls) {
+  const r = await fetch("api/index?op=scan-batch", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ urls }) });
+  const j = await r.json(); if (!r.ok) throw new Error(j.error || r.statusText); return j.results;
+}
+
+/* ---------- Actions ---------- */
+async function actFind() {
+  if (!state.zone) return setHint("Draw a zone first.");
+  const pts = zonePoints(), km2 = areaKm2(pts);
+  if (km2 > 30 && !state._warned) { state._warned = true; return setHint(`That zone is ${km2.toFixed(0)} km². Large zones can time out. Click again to continue.`); }
+  busy(true, "Searching OpenStreetMap…"); progress(35);
+  try {
+    state.places = await findPlaces(pts); state.scans = {}; state.checked.clear();
+    drawMarkers(); setHint(`Found ${state.places.length} places. Scan websites to find emails and newsletters.`);
+  } catch (e) { setHint(e.message, true); }
+  progress(0); busy(false);
+}
+async function actScan() {
+  if (!(await scanAvailable())) return setHint("Website scanning needs the Python API (Vercel or server.py). The list and CSV work without it.", true);
+  const urls = [...new Set(state.places.filter(p => p.website && !state.scans[p.website]).map(p => p.website))];
+  if (!urls.length) return setHint("Every website has been scanned.");
+  busy(true, `Scanning ${urls.length} websites…`);
+  let done = 0; const B = 12;
+  for (let i = 0; i < urls.length; i += B) {
+    const chunk = urls.slice(i, i + B);
+    try { Object.assign(state.scans, await scanBatch(chunk)); }
+    catch (e) { chunk.forEach(u => state.scans[u] = { ok: false, error: e.message }); }
+    done += chunk.length; progress(100 * done / urls.length); setHint(`Scanned ${done} of ${urls.length} websites…`);
+    drawMarkers(); update();
+  }
+  progress(0); busy(false); setHint("Scan complete.");
+}
+function actCsv(onlyChecked) {
+  const cols = ["name", "type", "category", "address", "zip", "phone", "website", "emails", "newsletter", "newsletter_tools",
+    "instagram", "facebook", "tiktok", "linkedin", "x", "yelp", "linktree", "hours", "lat", "lon", "osm"];
+  let rows = visible(); if (onlyChecked && state.checked.size) rows = rows.filter(p => state.checked.has(p.id));
+  const data = rows.map(p => { const s = state.scans[p.website] || {}, so = socialsOf(p);
+    return [p.name, p.group, p.category, p.address, p.zip, p.phone, p.website, emailsOf(p).join("; "), newsLabel(p),
+      (s.providers || []).join("; "), so.instagram, so.facebook, so.tiktok, so.linkedin, so.x, so.yelp, so.linktree, p.hours, p.lat, p.lon, p.osm]; });
+  const csv = [cols, ...data].map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+  a.download = `zone-scout-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+}
+
+/* ---------- Derived ---------- */
+const emailsOf = p => [...new Set([...(p.emails || []), ...((state.scans[p.website] || {}).emails || [])])];
+const newsOf = p => { if (!p.website) return "none"; const s = state.scans[p.website]; if (!s) return "pending"; if (!s.ok) return "error"; return s.newsletter; };
+const newsLabel = p => ({ yes: "yes", likely: "likely", no: "no", pending: "not scanned", error: "site unreachable", none: "no website" })[newsOf(p)];
+const toolsOf = p => ((state.scans[p.website] || {}).providers || []).filter(x => !/SMS/.test(x));
+const socialsOf = p => Object.assign({}, (state.scans[p.website] || {}).socials || {},
+  Object.fromEntries(Object.entries({ instagram: p.instagram, facebook: p.facebook }).filter(([, v]) => v)));
+function visible() {
+  const q = state.q.toLowerCase();
+  return state.places.filter(p => {
+    if (q && !(p.name + " " + p.category + " " + p.address).toLowerCase().includes(q)) return false;
+    if (state.filter === "web") return !!p.website;
+    if (state.filter === "email") return emailsOf(p).length > 0;
+    if (state.filter === "news") return ["yes", "likely"].includes(newsOf(p));
+    return true;
+  });
+}
+function stats() {
+  const P = state.places, scanned = P.filter(p => p.website && state.scans[p.website]).length;
+  return { total: P.length, web: P.filter(p => p.website).length, email: P.filter(p => emailsOf(p).length).length,
+    news: P.filter(p => newsOf(p) === "yes").length, likely: P.filter(p => newsOf(p) === "likely").length, scanned,
+    km2: state.zone ? areaKm2(zonePoints()) : 0 };
+}
+const COLORS = Object.assign({ yes: "#2f9e5e", likely: "#d9962b", pending: "#4d7cc7", no: "#9aa0a6", error: "#9aa0a6", none: "#c3c7cc" }, UI.colors || {});
+const colorOf = p => COLORS[newsOf(p)];
+
+/* ---------- Map markers ---------- */
+function drawMarkers() {
+  markerLayer.clearLayers(); state.markers = {};
+  state.places.forEach(p => {
+    if (p.lat == null) return;
+    const m = L.circleMarker([p.lat, p.lon], Object.assign({ radius: 6, weight: 1.5, color: "#fff", fillColor: colorOf(p), fillOpacity: 1 }, UI.markerStyle || {}))
+      .bindTooltip(esc(p.name), { direction: "top", offset: [0, -6] }).on("click", () => select(p.id, false));
+    m.addTo(markerLayer); state.markers[p.id] = m;
+  });
+}
+function select(id, fly) {
+  state.selected = id;
+  Object.entries(state.markers).forEach(([k, m]) => m.setStyle({ radius: k === id ? 10 : 6, weight: k === id ? 3 : 1.5 }));
+  const m = state.markers[id]; if (m && fly) map.panTo(m.getLatLng());
+  if (UI.onSelect) UI.onSelect(id, fly); else update();
+}
+
+/* ---------- Plumbing ---------- */
+function setHint(t, err) { $$("[data-hint]").forEach(el => { el.textContent = t; el.classList.toggle("is-err", !!err); }); }
+function progress(p) { $$("[data-progress]").forEach(el => { el.style.width = p + "%"; el.parentElement.classList.toggle("on", p > 0); }); }
+function busy(b, msg) { state.busy = b; if (msg) setHint(msg); update(); }
+function update() {
+  const s = stats();
+  $$("[data-act=find]").forEach(b => b.disabled = !state.zone || state.busy);
+  $$("[data-act=scan]").forEach(b => b.disabled = state.busy || !s.web);
+  $$("[data-act=csv]").forEach(b => b.disabled = state.busy || !s.total);
+  $$("[data-act=clear]").forEach(b => b.disabled = state.busy || !state.zone);
+  $$("[data-stat]").forEach(el => { const v = s[el.dataset.stat]; el.textContent = el.dataset.stat === "km2" ? v.toFixed(2) : v; });
+  document.body.dataset.stage = !state.zone ? "draw" : !s.total ? "find" : !s.scanned ? "scan" : "done";
+  if (UI.render) UI.render(visible(), s);
+}
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const safe = s => /^(https?:|mailto:)/i.test(String(s)) ? esc(s) : "#";
+const host = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; } };
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if (!b || b.disabled) return;
+  const a = b.dataset.act;
+  if (a === "rect") startDraw("rectangle"); else if (a === "poly") startDraw("polygon");
+  else if (a === "find") actFind(); else if (a === "scan") actScan(); else if (a === "csv") actCsv(b.dataset.checked === "1");
+  else if (a === "clear") clearZone();
+});
+document.addEventListener("click", e => {
+  const c = e.target.closest("[data-filter]"); if (!c) return;
+  $$("[data-filter]").forEach(x => x.classList.toggle("on", x === c)); state.filter = c.dataset.filter; update();
+});
+document.addEventListener("input", e => { if (e.target.matches("[data-search]")) { state.q = e.target.value; update(); } });
+update();
+</script>
+</body>
+</html>
