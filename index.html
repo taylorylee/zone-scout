@@ -56,19 +56,69 @@
   .empty { padding:60px 20px; text-align:center; color:var(--muted); }
   .leaflet-container { font:inherit; }
   @media (max-width:1000px) { .main { grid-template-columns:1fr; grid-template-rows:40vh 1fr; } .kpis { grid-template-columns:repeat(3,1fr); } .kpi:nth-child(n+4) { display:none; } }
+
+  .app { grid-template-rows:auto 1fr !important; }
+  .view { display:grid; grid-template-rows:auto 1fr; min-height:0; } .view[hidden] { display:none; }
+  .navtabs { display:flex; gap:2px; background:#f1f3f5; padding:3px; border-radius:8px; }
+  .navtabs button { border:0; background:none; padding:5px 12px; color:var(--muted); }
+  .navtabs button.on { background:var(--panel); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  body[data-tab=deals] .bizonly { display:none; }
+  .crumb b:empty:before { content:"Name this zone"; color:#b7bcc3; font-weight:400; }
+  .adddeal { margin-top:4px; font-size:11.5px; padding:1px 7px; border-radius:5px; color:var(--accent); background:#eef2fd; border:0; }
+  /* deals */
+  .dealwrap { display:grid; grid-template-columns:minmax(360px,40%) 1fr; min-height:0; height:100%; }
+  .dlist { display:flex; flex-direction:column; min-height:0; background:var(--panel); border-right:1px solid var(--line); }
+  .dtitle { font-size:15px; } .dlist .sub, .dedit .sub, dialog .sub { text-transform:none; } .dfoot { display:flex; gap:8px; align-items:center; padding:10px 14px; border-top:1px solid var(--line); flex-wrap:wrap; }
+  .btnlike { font-weight:500; border:1px solid var(--line); border-radius:7px; padding:6px 11px; cursor:pointer; background:var(--panel); }
+  th.r, td.r { text-align:right; }
+  .pillx { padding:1px 6px; border-radius:5px; } .pillx.good { background:#e3f4ea; color:var(--green); } .pillx.warn { background:#fbf0dc; color:var(--amber); } .pillx.bad { background:#fbe4e1; color:var(--red); }
+  .dedit { overflow:auto; padding:18px 24px 40px; }
+  .dhead { display:flex; gap:10px; align-items:center; margin-bottom:14px; } .dhead .fld span { display:none; }
+  .dname { font:600 20px 'IBM Plex Sans', sans-serif; border:1px solid transparent; border-radius:7px; padding:4px 8px; margin-left:-8px; flex:1; min-width:0; background:none; }
+  .dname:hover, .dname:focus { border-color:var(--line); background:var(--panel); outline:none; }
+  button.ghost { background:none; }
+  .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:18px; }
+  .acard { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+  .acard span { font-size:11.5px; color:var(--muted); display:block; } .acard strong { font:500 22px/1.3 'IBM Plex Mono', monospace; display:block; }
+  .acard em { font-style:normal; font-size:11.5px; color:var(--muted); display:block; }
+  .acard.dscr.good { border-color:#a8dcbd; } .acard.dscr.good strong { color:var(--green); }
+  .acard.dscr.warn { border-color:#ecd09c; } .acard.dscr.warn strong { color:var(--amber); }
+  .acard.dscr.bad { border-color:#f0b3aa; } .acard.dscr.bad strong { color:var(--red); }
+  .sect { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:12px; }
+  .sect h4 { margin:0 0 10px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:600; }
+  .sect h4 .sub { text-transform:none; letter-spacing:0; font-weight:400; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; } .grid.g4 { grid-template-columns:repeat(4,1fr); }
+  .fld { display:flex; flex-direction:column; gap:3px; } .fld.wide { grid-column:1/-1; }
+  .fld > span { font-size:11.5px; color:var(--muted); }
+  .fld input, .fld select, .fld textarea, .fin input { font:inherit; padding:6px 9px; border:1px solid var(--line); border-radius:7px; background:#fff; width:100%; }
+  .fld input:focus, .fld select:focus, .fld textarea:focus, .fin input:focus { outline:2px solid #c9d6fb; border-color:var(--accent); }
+  .money { font-family:'IBM Plex Mono', monospace; }
+  .fld.calc b { font-weight:500; padding:6px 0; }
+  .fin { margin:0; } .fin th, .fin td { position:static; background:none; padding:4px 6px; border:0; }
+  .fin .yr { font-weight:600; text-align:center; } .fin td.lbl { white-space:nowrap; font-weight:500; padding-right:10px; }
+  .fin tr.calcrow td { color:var(--muted); font-size:12px; padding-top:6px; } .fin td.mono { text-align:center; }
+  .finbtns { margin-top:8px; display:flex; gap:6px; }
+  .empty.big { padding:120px 20px; }
+  dialog { border:1px solid var(--line); border-radius:12px; padding:20px; width:min(640px,92vw); }
+  dialog::backdrop { background:rgba(15,18,22,.35); } dialog h3 { margin:0 0 6px; }
+  dialog textarea { width:100%; font:12.5px/1.5 'IBM Plex Mono', monospace; border:1px solid var(--line); border-radius:8px; padding:10px; }
+  .dlgbtns { display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
+  @media (max-width:1000px) { .dealwrap { grid-template-columns:1fr; } .cards, .grid.g4 { grid-template-columns:1fr 1fr; } }
 </style>
 </head>
 <body>
 <div class="app">
   <header>
     <div class="logo"><i></i>Zone Scout</div>
-    <div class="crumb">/ <b contenteditable="true" spellcheck="false" title="Click to rename this zone"></b></div>
+    <div class="navtabs"><button class="on" data-tab="biz">Businesses</button><button data-tab="deals">Deals</button></div>
+    <div class="crumb bizonly">/ <b contenteditable="true" spellcheck="false" title="Click to rename this zone"></b></div>
     <div class="sp"></div>
-    <button class="primary" data-act="find">Find places</button>
-    <button data-act="scan">Scan websites</button>
-    <button data-act="csv">Export all</button>
-    <button data-act="csv" data-checked="1">Export selected</button>
+    <button class="primary bizonly" data-act="find">Find places</button>
+    <button class="bizonly" data-act="scan">Scan websites</button>
+    <button class="bizonly" data-act="csv">Export all</button>
+    <button class="bizonly" data-act="csv" data-checked="1">Export selected</button>
   </header>
+  <section class="view" id="view-biz">
   <div class="kpis">
     <div class="kpi"><span>Zone area</span><strong data-stat="km2">0.00</strong><em>km²</em></div>
     <div class="kpi"><span>Businesses</span><strong data-stat="total">0</strong></div>
@@ -91,6 +141,35 @@
       <div class="scroll" id="list"></div>
     </div>
   </div>
+  </section>
+<section class="view" id="view-deals" hidden>
+  <div class="dealwrap">
+    <div class="dlist">
+      <div class="tb">
+        <b class="dtitle">Deals</b><span class="sub" id="dcount"></span>
+        <div class="sp"></div>
+        <button data-deal="paste">Paste listing</button>
+        <button class="primary" data-deal="new">New deal</button>
+      </div>
+      <div class="scroll" id="dealTable"></div>
+      <div class="dfoot">
+        <button data-deal="csv">Export CSV</button>
+        <button data-deal="json">Back up</button>
+        <label class="btnlike">Restore<input type="file" accept=".json" id="dealImport" hidden></label>
+        <span class="sub">Saved in this browser only.</span>
+      </div>
+    </div>
+    <div class="dedit" id="dealEditor"></div>
+  </div>
+  <dialog id="pasteDlg">
+    <form method="dialog">
+      <h3>Paste a listing</h3>
+      <p class="sub">Copy the whole listing page (BizBuySell, BizQuest, broker PDF text) and paste it here. Zone Scout picks out the asking price, cash flow, EBITDA, revenue, real estate, year established and reason for selling. Check every number afterwards.</p>
+      <textarea id="pasteText" rows="12" placeholder="Asking Price: $450,000&#10;Cash Flow (SDE): $162,000&#10;Gross Revenue: $610,000&#10;EBITDA: $118,000&#10;Real Estate: Leased&#10;Established: 2009&#10;Reason for Selling: Retirement"></textarea>
+      <div class="dlgbtns"><button value="cancel">Cancel</button><button class="primary" value="ok" id="pasteGo">Create deal</button></div>
+    </form>
+  </dialog>
+</section>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
@@ -111,14 +190,15 @@ window.UI = {
         const n = newsOf(p), em = emailsOf(p), so = socialsOf(p), tools = toolsOf(p);
         return `<tr data-id="${esc(p.id)}" class="${state.selected === p.id ? "sel" : ""}">
           <td class="cb"><input type="checkbox" data-cb="${esc(p.id)}" ${state.checked.has(p.id) ? "checked" : ""}></td>
-          <td><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.category)}${p.address ? " · " + esc(p.address) : ""}</div></td>
+          <td><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.category)}${p.address ? " · " + esc(p.address) : ""}</div><button class="adddeal" data-newdeal="${esc(p.id)}">+ Deal</button></td>
           <td><span class="st"><i style="background:${colorOf(p)}"></i>${lbl[n]}</span>${tools.length ? `<div class="sub">${esc(tools.join(", "))}</div>` : ""}</td>
           <td>${em.length ? em.map(e => `<div><a href="mailto:${esc(e)}">${esc(e)}</a></div>`).join("") : `<span class="none">—</span>`}</td>
           <td>${p.website ? `<div><a href="${safe(p.website)}" target="_blank" rel="noopener">${esc(host(p.website))}</a></div>` : `<span class="none">—</span>`}
             <div class="soc">${Object.entries(so).map(([k, v]) => `<a href="${safe(v)}" target="_blank" rel="noopener">${k}</a>`).join("")}</div></td>
           <td class="mono">${esc(p.phone) || `<span class="none">—</span>`}</td></tr>`;
       }).join("") + `</tbody></table>`;
-    list.querySelectorAll("tr[data-id]").forEach(r => r.onclick = e => { if (!e.target.closest("a,input")) select(r.dataset.id, true); });
+    list.querySelectorAll("tr[data-id]").forEach(r => r.onclick = e => { if (!e.target.closest("a,input,button")) select(r.dataset.id, true); });
+    list.querySelectorAll("[data-newdeal]").forEach(b => b.onclick = () => window.dealFromBusiness(state.places.find(p => p.id === b.dataset.newdeal)));
     list.querySelectorAll("[data-cb]").forEach(c => c.onchange = () => { c.checked ? state.checked.add(c.dataset.cb) : state.checked.delete(c.dataset.cb); });
     const all = $("#all"); if (all) all.onchange = () => { items.forEach(p => all.checked ? state.checked.add(p.id) : state.checked.delete(p.id)); update(); };
   }
@@ -318,5 +398,246 @@ document.addEventListener("click", e => {
 document.addEventListener("input", e => { if (e.target.matches("[data-search]")) { state.q = e.target.value; update(); } });
 update();
 </script>
+<script>
+function showTab(t) {
+  document.body.dataset.tab = t;
+  document.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  document.getElementById("view-biz").hidden = t !== "biz"; document.getElementById("view-deals").hidden = t !== "deals";
+  if (t === "biz" && typeof map !== "undefined") setTimeout(() => map.invalidateSize(), 0);
+  try { localStorage.setItem("zonescout.tab", t); } catch {}
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) showTab(b.dataset.tab); });
+</script>
+<script>
+/* ================= Deal Scout: business-for-sale analysis ================= */
+(function () {
+  const KEY = "zonescout.deals.v1";
+  const Y = new Date().getFullYear();
+  const METRICS = [["revenue", "Gross revenue"], ["sde", "Cash flow (SDE)"], ["ebitda", "EBITDA"]];
+  let deals = load(), cur = deals[0] ? deals[0].id : null;
+
+  function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(deals)); } catch {} }
+  const uid = () => Math.random().toString(36).slice(2, 10);
+  function blank(extra) {
+    return Object.assign({
+      id: uid(), created: new Date().toISOString(), name: "Untitled deal", industry: "", location: "", address: "", url: "", broker: "",
+      established: "", status: "Reviewing",
+      asking: "", askingNote: "",
+      reType: "Leased", reValue: "", reNote: "", rent: "",
+      inventory: "", ffe: "",
+      years: [String(Y - 3), String(Y - 2), String(Y - 1)],
+      fin: { revenue: ["", "", ""], sde: ["", "", ""], ebitda: ["", "", ""] },
+      finNote: { revenue: "", sde: "", ebitda: "" },
+      reason: "", reasonType: "", reasonNote: "",
+      down: 10, rate: 10.5, termBiz: 10, termRe: 25, salary: "", capex: "", sellerNote: "",
+      notes: ""
+    }, extra || {});
+  }
+
+  /* ---------- math ---------- */
+  const num = v => { if (v === "" || v == null) return null; const n = parseFloat(String(v).replace(/[^0-9.\-]/g, "")); return isNaN(n) ? null : n; };
+  const money = n => n == null ? "—" : (n < 0 ? "−" : "") + "$" + Math.abs(Math.round(n)).toLocaleString("en-US");
+  const kmoney = n => n == null ? "—" : Math.abs(n) >= 1e6 ? "$" + (n / 1e6).toFixed(2) + "M" : "$" + Math.round(n / 1000) + "k";
+  const x = n => n == null || !isFinite(n) ? "—" : n.toFixed(2) + "x";
+  const pct = n => n == null || !isFinite(n) ? "—" : (n * 100).toFixed(1) + "%";
+  const pmt = (P, ratePct, yrs) => { if (!P || P <= 0) return 0; const r = ratePct / 100 / 12, n = yrs * 12; return r === 0 ? P / n : P * r / (1 - Math.pow(1 + r, -n)); };
+  function latest(d, k) { for (let i = d.years.length - 1; i >= 0; i--) { const v = num(d.fin[k][i]); if (v != null) return { v, year: d.years[i] }; } return { v: null, year: null }; }
+  function avg(d, k) { const vs = d.fin[k].map(num).filter(v => v != null); return vs.length ? vs.reduce((a, b) => a + b, 0) / vs.length : null; }
+
+  function analyze(d) {
+    const ask = num(d.asking), re = d.reType === "Owned, included" ? (num(d.reValue) || 0) : 0;
+    const biz = ask == null ? null : ask - re;
+    const sde = latest(d, "sde"), ebitda = latest(d, "ebitda"), rev = latest(d, "revenue"), sdeAvg = avg(d, "sde");
+    const down = ask == null ? null : ask * (num(d.down) || 0) / 100;
+    const seller = num(d.sellerNote) || 0;
+    const loan = ask == null ? null : Math.max(ask - down - seller, 0);
+    const reLoan = ask ? loan * (re / ask) : 0, bizLoan = (loan || 0) - reLoan;
+    const r = num(d.rate) || 0;
+    const debt = 12 * (pmt(bizLoan, r, num(d.termBiz) || 10) + pmt(reLoan, r, num(d.termRe) || 25) + pmt(seller, r, num(d.termBiz) || 10));
+    const avail = sde.v == null ? null : sde.v - (num(d.salary) || 0) - (num(d.capex) || 0);
+    const firstY = parseInt(d.established, 10);
+    return {
+      ask, re, biz, down, loan, debt, avail, sde, ebitda, rev, sdeAvg,
+      headline: ask && sde.v ? ask / sde.v : null,
+      business: biz && sde.v ? biz / sde.v : null,
+      businessAvg: biz && sdeAvg ? biz / sdeAvg : null,
+      ebitdaX: biz && ebitda.v ? biz / ebitda.v : null,
+      revX: ask && rev.v ? ask / rev.v : null,
+      margin: sde.v != null && rev.v ? sde.v / rev.v : null,
+      dscr: avail != null && debt > 0 ? avail / debt : null,
+      age: firstY > 1800 && firstY <= Y ? Y - firstY : null,
+      growth: (() => { const vs = d.fin.revenue.map(num); const a = vs.findIndex(v => v != null), b = vs.length - 1 - [...vs].reverse().findIndex(v => v != null); return a >= 0 && b > a && vs[a] ? Math.pow(vs[b] / vs[a], 1 / (b - a)) - 1 : null; })()
+    };
+  }
+  const dscrClass = v => v == null ? "" : v >= 1.25 ? "good" : v >= 1 ? "warn" : "bad";
+
+  /* ---------- listing parser ---------- */
+  function parseListing(t) {
+    const grab = (re) => { const m = t.match(re); return m ? m[1].trim() : ""; };
+    const amt = (label) => grab(new RegExp(label + "\\s*[:\\-]?\\s*(\\$?\\s?[0-9][0-9,\\.]*\\s*[kKmM]?)", "i"));
+    const toNum = s => { if (!s) return ""; let n = parseFloat(s.replace(/[$,\s]/g, "")); if (/m$/i.test(s)) n *= 1e6; else if (/k$/i.test(s)) n *= 1e3; return isNaN(n) ? "" : String(Math.round(n)); };
+    const d = blank();
+    const title = t.split("\n").map(s => s.trim()).find(s => s.length > 6 && !/:/.test(s));
+    if (title) d.name = title.slice(0, 90);
+    d.asking = toNum(amt("Asking Price")) || toNum(amt("Price"));
+    d.fin.sde[2] = toNum(amt("Cash Flow(?:\\s*\\(SDE\\))?")) || toNum(amt("SDE")) || toNum(amt("Seller'?s? Discretionary Earnings"));
+    d.fin.ebitda[2] = toNum(amt("EBITDA"));
+    d.fin.revenue[2] = toNum(amt("Gross Revenue")) || toNum(amt("Revenue")) || toNum(amt("Sales"));
+    d.inventory = toNum(amt("Inventory"));
+    d.ffe = toNum(amt("FF&E")) || toNum(amt("Furniture, Fixtures,? (?:and|&) Equipment"));
+    d.established = grab(/(?:Established|Year Established|Founded)\s*[:\-]?\s*(\d{4})/i);
+    d.location = grab(/Location\s*[:\-]\s*([^\n]+)/i).slice(0, 80);
+    d.industry = grab(/(?:Industry|Category|Business Type)\s*[:\-]\s*([^\n]+)/i).slice(0, 60);
+    const re = grab(/Real Estate\s*[:\-]?\s*([^\n]+)/i);
+    if (/own/i.test(re)) { d.reType = /not included|separate|available/i.test(re) ? "Owned, separate" : "Owned, included"; d.reValue = toNum(amt("Real Estate(?: Value| Price)?")); }
+    else if (/lease/i.test(re)) d.reType = "Leased";
+    d.rent = toNum(amt("(?:Monthly )?Rent"));
+    d.reason = grab(/Reason for Selling\s*[:\-]?\s*([^\n]+)/i).slice(0, 300);
+    d.reasonType = classifyReason(d.reason);
+    const note = "From pasted listing. The year was not stated, so it is filed under " + d.years[2] + ".";
+    METRICS.forEach(([k]) => { if (d.fin[k][2]) d.finNote[k] = note; });
+    if (d.asking) d.askingNote = "From pasted listing.";
+    if (re) d.reNote = "Listing says: " + re.slice(0, 120);
+    d.notes = "Pasted listing text:\n" + t.slice(0, 4000);
+    return d;
+  }
+  function classifyReason(s) {
+    if (!s) return "";
+    const rules = [["Retirement", /retir/i], ["Relocation", /relocat|moving|move out/i], ["Other ventures", /other (business|venture|interest)|new (business|venture)|focus on/i],
+      ["Partnership change", /partner/i], ["Burnout", /burn ?out|tired|time for a change/i], ["Personal", /personal|family|health/i]];
+    for (const [k, r] of rules) if (r.test(s)) return k;
+    return "Other";
+  }
+
+  /* ---------- render ---------- */
+  const E = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  function renderList() {
+    const el = document.getElementById("dealTable");
+    document.getElementById("dcount").textContent = deals.length ? `${deals.length} saved` : "";
+    if (!deals.length) { el.innerHTML = `<div class="empty">No deals yet.<br>Click <b>New deal</b>, <b>Paste listing</b>, or <b>+ Deal</b> on a business in the Businesses tab.</div>`; return; }
+    el.innerHTML = `<table><thead><tr><th>Business</th><th class="r">Ask</th><th class="r">SDE</th><th class="r">Headline</th><th class="r">Business</th><th class="r">DSCR</th></tr></thead><tbody>` +
+      deals.map(d => { const a = analyze(d); return `<tr data-deal-id="${d.id}" class="${d.id === cur ? "sel" : ""}">
+        <td><div class="nm">${E(d.name)}</div><div class="sub">${E([d.industry, d.status].filter(Boolean).join(" · "))}</div></td>
+        <td class="r mono">${kmoney(a.ask)}</td><td class="r mono">${kmoney(a.sde.v)}</td><td class="r mono">${x(a.headline)}</td><td class="r mono">${x(a.business)}</td>
+        <td class="r mono"><span class="pillx ${dscrClass(a.dscr)}">${x(a.dscr)}</span></td></tr>`; }).join("") + `</tbody></table>`;
+    el.querySelectorAll("tr[data-deal-id]").forEach(r => r.onclick = () => { cur = r.dataset.dealId; renderAll(); });
+  }
+
+  const f = (k, label, opts = {}) => `<label class="fld ${opts.wide ? "wide" : ""}"><span>${label}</span>${opts.type === "textarea"
+    ? `<textarea data-k="${k}" rows="${opts.rows || 2}" placeholder="${E(opts.ph || "")}"></textarea>`
+    : opts.type === "select" ? `<select data-k="${k}">${opts.options.map(o => `<option>${E(o)}</option>`).join("")}</select>`
+    : `<input data-k="${k}" ${opts.money ? 'inputmode="decimal" class="money"' : ""} placeholder="${E(opts.ph || "")}">`}</label>`;
+
+  function renderEditor() {
+    const el = document.getElementById("dealEditor");
+    const d = deals.find(z => z.id === cur);
+    if (!d) { el.innerHTML = `<div class="empty big">Pick a deal on the left, or start a new one.</div>`; return; }
+    el.innerHTML = `
+      <div class="dhead"><input class="dname" data-k="name">
+        ${f("status", "", { type: "select", options: ["Reviewing", "Contacted broker", "NDA signed", "Offer made", "Passed"] })}
+        <button data-deal="del" class="ghost">Delete</button></div>
+      <div class="cards" id="dealCards"></div>
+      <div class="sect"><h4>Listing</h4><div class="grid">
+        ${f("industry", "Industry", { ph: "Café, laundromat, salon…" })}${f("location", "Location / address")}
+        ${f("established", "Year established", { ph: "2009" })}<div class="fld calc"><span>Years in business</span><b data-calc="age">—</b></div>
+        ${f("url", "Listing link", { ph: "https://…" })}${f("broker", "Broker / contact")}</div></div>
+      <div class="sect"><h4>The ask</h4><div class="grid">
+        ${f("asking", "Asking price", { money: 1, ph: "$" })}${f("askingNote", "Context", { ph: "What's included, negotiable?, date listed" })}
+        ${f("reType", "Real estate", { type: "select", options: ["Leased", "Owned, included", "Owned, separate", "Unknown"] })}
+        ${f("reValue", "Real estate value (if included)", { money: 1, ph: "$" })}
+        ${f("rent", "Monthly rent (if leased)", { money: 1, ph: "$" })}${f("reNote", "Real estate context", { ph: "Lease term left, renewal options, landlord" })}
+        ${f("inventory", "Inventory", { money: 1, ph: "$ (often extra)" })}${f("ffe", "FF&E", { money: 1, ph: "$ furniture, fixtures, equipment" })}</div></div>
+      <div class="sect"><h4>Financials by year</h4>
+        <table class="fin"><thead><tr><th></th>${d.years.map((y, i) => `<th><input class="yr" data-year="${i}" value="${E(y)}"></th>`).join("")}<th>Context</th></tr></thead><tbody>
+        ${METRICS.map(([k, lbl]) => `<tr><td class="lbl">${lbl}</td>${d.years.map((_, i) => `<td><input class="money" inputmode="decimal" data-fin="${k}" data-i="${i}" placeholder="$"></td>`).join("")}<td><input data-finnote="${k}" placeholder="Source, add-backs, tax return vs P&amp;L"></td></tr>`).join("")}
+        <tr class="calcrow"><td class="lbl">SDE margin</td>${d.years.map((_, i) => `<td class="mono" data-margin="${i}">—</td>`).join("")}<td class="sub">SDE ÷ revenue</td></tr>
+        </tbody></table>
+        <div class="finbtns"><button data-deal="addyear" class="ghost">+ Add year</button>${d.years.length > 1 ? `<button data-deal="dropyear" class="ghost">Remove first year</button>` : ""}</div></div>
+      <div class="sect"><h4>Why it's selling</h4><div class="grid">
+        ${f("reasonType", "Category", { type: "select", options: ["", "Retirement", "Relocation", "Other ventures", "Partnership change", "Burnout", "Personal", "Other", "Not disclosed"] })}
+        ${f("reason", "Seller's stated reason", { ph: "As written in the listing" })}
+        ${f("reasonNote", "Your read / questions to ask", { type: "textarea", wide: 1, ph: "Does the story match the numbers? Declining revenue + 'retirement' is worth a question." })}</div></div>
+      <div class="sect"><h4>Financing assumptions <span class="sub">(your inputs, change freely)</span></h4><div class="grid g4">
+        ${f("down", "Down payment %", { ph: "10" })}${f("rate", "Interest rate %", { ph: "10.5" })}${f("termBiz", "Business loan years", { ph: "10" })}${f("termRe", "Real estate loan years", { ph: "25" })}
+        ${f("sellerNote", "Seller financing $", { money: 1, ph: "0" })}${f("salary", "Salary to pay a manager $/yr", { money: 1, ph: "0 if you run it" })}${f("capex", "Yearly reinvestment $", { money: 1, ph: "Equipment, repairs" })}</div></div>
+      <div class="sect"><h4>Notes</h4>${f("notes", "", { type: "textarea", rows: 5, wide: 1 })}</div>`;
+    // fill values
+    el.querySelectorAll("[data-k]").forEach(i => { i.value = d[i.dataset.k] ?? ""; });
+    el.querySelectorAll("[data-fin]").forEach(i => { i.value = d.fin[i.dataset.fin][+i.dataset.i] || ""; });
+    el.querySelectorAll("[data-finnote]").forEach(i => { i.value = d.finNote[i.dataset.finnote] || ""; });
+    el.querySelectorAll("input,select,textarea").forEach(i => i.addEventListener("input", () => onEdit(d, i)));
+    renderCards(d);
+  }
+
+  function renderCards(d) {
+    const a = analyze(d), el = document.getElementById("dealCards"); if (!el) return;
+    const card = (t, v, sub, cls = "") => `<div class="acard ${cls}"><span>${t}</span><strong>${v}</strong><em>${sub}</em></div>`;
+    el.innerHTML =
+      card("The ask", money(a.ask), a.re ? `${money(a.biz)} business + ${money(a.re)} real estate` : `${E(d.reType)} real estate · ${money(a.down)} down`) +
+      card("Headline multiple", x(a.headline), `Asking ÷ SDE${a.sde.year ? " (" + E(a.sde.year) + ")" : ""}`) +
+      card("Business multiple", x(a.business), `Business price ÷ SDE · ${x(a.businessAvg)} on avg SDE · ${x(a.ebitdaX)} EBITDA`) +
+      card("Debt service coverage", x(a.dscr), a.debt ? `${money(a.avail)} available ÷ ${money(a.debt)}/yr debt` : "Add asking price and SDE", "dscr " + dscrClass(a.dscr));
+    const set = (k, v) => { const n = document.querySelector(`[data-calc="${k}"]`); if (n) n.textContent = v; };
+    set("age", a.age == null ? "—" : a.age + " yrs");
+    d.years.forEach((_, i) => { const r = num(d.fin.revenue[i]), s = num(d.fin.sde[i]); const n = document.querySelector(`[data-margin="${i}"]`); if (n) n.textContent = r && s != null ? pct(s / r) : "—"; });
+  }
+
+  function onEdit(d, i) {
+    if (i.dataset.k) d[i.dataset.k] = i.value;
+    if (i.dataset.fin) d.fin[i.dataset.fin][+i.dataset.i] = i.value;
+    if (i.dataset.finnote) d.finNote[i.dataset.finnote] = i.value;
+    if (i.dataset.year) d.years[+i.dataset.year] = i.value;
+    if (i.dataset.k === "reason" && !d.reasonType) { d.reasonType = classifyReason(i.value); }
+    d.updated = new Date().toISOString(); save(); renderCards(d); renderList();
+  }
+  function renderAll() { renderList(); renderEditor(); }
+
+  /* ---------- export ---------- */
+  function csv() {
+    const head = ["name", "status", "industry", "location", "established", "years_in_business", "asking_price", "real_estate", "real_estate_value", "monthly_rent",
+      ...deals[0].years.flatMap(y => METRICS.map(([k]) => `${k}_${y}`)), "latest_sde", "headline_multiple", "business_multiple", "ebitda_multiple",
+      "annual_debt_service", "dscr", "reason_category", "reason", "listing_url"];
+    const rows = deals.map(d => { const a = analyze(d); return [d.name, d.status, d.industry, d.location, d.established, a.age, a.ask, d.reType, a.re, num(d.rent),
+      ...d.years.flatMap((_, i) => METRICS.map(([k]) => num(d.fin[k][i]))), a.sde.v, a.headline?.toFixed(2), a.business?.toFixed(2), a.ebitdaX?.toFixed(2),
+      Math.round(a.debt), a.dscr?.toFixed(2), d.reasonType, d.reason, d.url]; });
+    download([head, ...rows].map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n"), "text/csv", "deals.csv");
+  }
+  function download(text, type, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); }
+
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-deal]"); if (!b) return;
+    const act = b.dataset.deal, d = deals.find(z => z.id === cur);
+    if (act === "new") { const n = blank(); deals.unshift(n); cur = n.id; save(); renderAll(); document.querySelector(".dname")?.select(); }
+    if (act === "paste") { document.getElementById("pasteText").value = ""; document.getElementById("pasteDlg").showModal(); }
+    if (act === "del" && d && window.confirm(`Delete "${d.name}"?`)) { deals = deals.filter(z => z.id !== d.id); cur = deals[0]?.id || null; save(); renderAll(); }
+    if (act === "addyear" && d) { const last = parseInt(d.years[d.years.length - 1], 10); d.years.push(isNaN(last) ? "TTM" : String(last + 1)); METRICS.forEach(([k]) => d.fin[k].push("")); save(); renderEditor(); }
+    if (act === "dropyear" && d && d.years.length > 1) { d.years.shift(); METRICS.forEach(([k]) => d.fin[k].shift()); save(); renderAll(); }
+    if (act === "csv" && deals.length) csv();
+    if (act === "json") download(JSON.stringify(deals, null, 2), "application/json", "zone-scout-deals.json");
+  });
+  document.getElementById("pasteDlg").addEventListener("close", () => {
+    const dlg = document.getElementById("pasteDlg"), t = document.getElementById("pasteText").value.trim();
+    if (dlg.returnValue !== "ok" || !t) return;
+    const d = parseListing(t); deals.unshift(d); cur = d.id; save(); renderAll();
+  });
+  document.getElementById("dealImport").addEventListener("change", async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try { const arr = JSON.parse(await file.text()); if (Array.isArray(arr)) { const ids = new Set(deals.map(z => z.id)); deals = [...arr.filter(z => !ids.has(z.id)), ...deals]; cur = deals[0]?.id; save(); renderAll(); } }
+    catch { alert("That file isn't a Zone Scout backup."); }
+    e.target.value = "";
+  });
+
+  // Called from the Businesses tab
+  window.dealFromBusiness = p => {
+    const d = blank({ name: p.name, industry: p.category, location: p.address, url: p.website, notes: p.website ? "Website: " + p.website : "" });
+    deals.unshift(d); cur = d.id; save(); showTab("deals"); renderAll();
+  };
+  window.renderDeals = renderAll;
+  renderAll();
+})();
+</script>
+
+<script>try { showTab(localStorage.getItem("zonescout.tab") || "biz"); } catch { showTab("biz"); }</script>
 </body>
 </html>

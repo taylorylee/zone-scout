@@ -40,10 +40,31 @@ Python 3.8+ only, no installs.
 **Newsletter (green):** the site loads a known email tool (Mailchimp, Klaviyo, Substack, Beehiiv, Kit, Constant Contact, Flodesk, MailerLite, Brevo, HubSpot, Omnisend, Squarespace or Shopify signup blocks, and others).
 **Signup form (amber):** an email field next to words like "newsletter" or "subscribe".
 
+## Deals tab
+
+Track businesses for sale and check whether the numbers work.
+
+- **Add a deal** with New deal, Paste listing (reads asking price, cash flow, EBITDA, revenue, real estate, year established and reason for selling from pasted listing text), or **+ Deal** on any row in the Businesses tab.
+- **Financials by year:** revenue, cash flow (SDE) and EBITDA for as many years as you have, each with a context note (source, add-backs, tax return vs P&L).
+- **Every figure has a context field** for what's included, lease terms, and questions to ask.
+
+What it calculates:
+
+| Metric | Formula |
+|---|---|
+| The ask | Asking price, split into business and real estate, plus your down payment |
+| Headline multiple | Asking price ÷ latest SDE |
+| Business multiple | (Asking price − included real estate) ÷ latest SDE, also shown on average SDE and on EBITDA |
+| Debt service coverage | (Latest SDE − manager salary − yearly reinvestment) ÷ annual loan payments |
+
+Loan payments use your own down payment, rate, terms and seller financing. Real estate is amortized over its own term. DSCR is green at 1.25x or higher, amber from 1.0x to 1.25x, red below 1.0x.
+
+Deals are saved in your browser. Use **Back up** to download them as a file and **Restore** to load them on another computer. The numbers are a screening tool, not financial advice; confirm them with the seller's tax returns, a lender and an advisor.
+
 ## Files
 
 ```
-index.html      Map + table app (Leaflet, OpenStreetMap lookup in the browser)
+index.html      Businesses (map + table) and Deals tabs
 api/index.py    Python API: website scanner + server-side place lookup (Vercel function)
 server.py       Runs index.html + the API on your computer
 vercel.json     Vercel function settings
