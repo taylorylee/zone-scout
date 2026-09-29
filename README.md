@@ -1,5 +1,7 @@
 # Zone Scout
 
+<img width="1440" height="900" alt="deals-tab" src="https://github.com/user-attachments/assets/c7744914-894f-43b6-a853-5254ff4507ab" />
+
 Draw a zone on a map and get every business inside it: name, category, address, phone, website, public emails, social links, and whether they run an email newsletter. Export to CSV.
 
 Built for mapping businesses. Works anywhere OpenStreetMap has coverage.
